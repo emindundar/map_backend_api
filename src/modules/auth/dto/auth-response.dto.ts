@@ -31,5 +31,6 @@ export class LoginResponseDto {
 export class RegisterResponseDto {
     success: boolean;
     message: string;
+    token: string;
     user: AuthUserDto;
 }

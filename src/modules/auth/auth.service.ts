@@ -56,11 +56,21 @@ export class AuthService {
 
             const savedUser = await this.userRepository.save(user);
 
+            // JWT token oluştur
+            const payload: JwtPayload = {
+                sub: savedUser.id,
+                email: savedUser.email,
+                role: savedUser.role,
+            };
+
+            const token = this.jwtService.sign(payload);
+
             this.logger.log(`New user registered: ${savedUser.email}`);
 
             return {
                 success: true,
-                message: 'Kullanıcı başarıyla kaydedildi.',
+                message: 'Kullanıcı başarıyla kaydedildi ve giriş yapıldı.',
+                token,
                 user: plainToClass(AuthUserDto, savedUser, {
                     excludeExtraneousValues: true,
                 }),
