@@ -4,10 +4,22 @@ import { User, UserRole } from '../../modules/users/entities/user.entity';
 
 export async function seedAdminUser(dataSource: DataSource) {
     const userRepository = dataSource.getRepository(User);
+    const envEmail = process.env.ADMIN_EMAIL;
+    const envPassword = process.env.ADMIN_PASSWORD;
+    const nodeEnv = process.env.NODE_ENV || 'development';
+
+    if (nodeEnv === 'production' && (!envEmail || !envPassword)) {
+        throw new Error(
+            'ADMIN_EMAIL ve ADMIN_PASSWORD production ortaminda zorunludur.',
+        );
+    }
+
+    const adminEmail = envEmail || 'admin@maptracking.com';
+    const adminPassword = envPassword || 'Admin123!@#';
 
     // Admin kullanıcısı var mı kontrol et
     const adminExists = await userRepository.findOne({
-        where: { email: 'admin@maptracking.com' },
+        where: { email: adminEmail },
     });
 
     if (adminExists) {
@@ -16,10 +28,10 @@ export async function seedAdminUser(dataSource: DataSource) {
     }
 
     // Admin kullanıcısı oluştur
-    const passwordHash = await bcrypt.hash('Admin123!@#', 10);
+    const passwordHash = await bcrypt.hash(adminPassword, 10);
 
     const admin = userRepository.create({
-        email: 'admin@maptracking.com',
+        email: adminEmail,
         passwordHash,
         role: UserRole.ADMIN,
     });
@@ -27,6 +39,6 @@ export async function seedAdminUser(dataSource: DataSource) {
     await userRepository.save(admin);
 
     console.log('✅ Admin user created successfully');
-    console.log('📧 Email: admin@maptracking.com');
-    console.log('🔑 Password: Admin123!@# (CHANGE THIS IMMEDIATELY!)');
+    console.log(`📧 Email: ${adminEmail}`);
+    console.log('🔑 Password: (hidden) - change immediately');
 }

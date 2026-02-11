@@ -49,6 +49,7 @@ describe('AppController (e2e)', () => {
                 .expect(201)
                 .expect((res) => {
                     expect(res.body).toHaveProperty('success', true);
+                    expect(res.body).toHaveProperty('token');
                     expect(res.body).toHaveProperty('user');
                 });
         });

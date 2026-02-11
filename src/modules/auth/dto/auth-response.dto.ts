@@ -1,4 +1,4 @@
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 import { UserRole } from '../../users/entities/user.entity';
 
 export class AuthUserDto {
@@ -22,15 +22,31 @@ export class AuthUserDto {
 }
 
 export class LoginResponseDto {
+    @Expose()
     success: boolean;
+
+    @Expose()
     message: string;
+
+    @Expose()
     token: string;
+
+    @Expose()
+    @Type(() => AuthUserDto)
     user: AuthUserDto;
 }
 
 export class RegisterResponseDto {
+    @Expose()
     success: boolean;
+
+    @Expose()
     message: string;
+
+    @Expose()
     token: string;
+
+    @Expose()
+    @Type(() => AuthUserDto)
     user: AuthUserDto;
 }

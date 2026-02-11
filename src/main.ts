@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
+import { RedisIoAdapter } from './common/adapters/redis-io.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -51,6 +52,7 @@ async function bootstrap() {
       .addTag('auth', 'Authentication endpoints')
       .addTag('users', 'User management endpoints')
       .addTag('health', 'Health check endpoints')
+      .addTag('location', 'Location tracking endpoints')
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
@@ -65,9 +67,18 @@ async function bootstrap() {
 
   const port = configService.get<number>('app.port') || 3000;
 
+  const redisUrl = process.env.REDIS_URL;
+  if (redisUrl) {
+    const redisIoAdapter = new RedisIoAdapter(app, redisUrl);
+    await redisIoAdapter.connectToRedis();
+    app.useWebSocketAdapter(redisIoAdapter);
+    console.log('🔌 WebSocket Redis adapter enabled');
+  }
+
   await app.listen(port);
 
   console.log(`🚀 Server running on http://localhost:${port}`);
+  console.log(`🔌 WebSocket: ws://localhost:${port}/location`);
   console.log(`🔒 Environment: ${configService.get('app.nodeEnv')}`);
   console.log(`🏥 Health check: http://localhost:${port}/api/health`);
 }

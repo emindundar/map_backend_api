@@ -43,6 +43,38 @@ class EnvironmentVariables {
     @IsNumber()
     @IsOptional()
     THROTTLE_LIMIT?: number = 10;
+
+    @IsString()
+    @IsOptional()
+    REDIS_URL?: string;
+
+    @IsNumber()
+    @IsOptional()
+    WS_MAX_PAYLOAD_BYTES?: number;
+
+    @IsNumber()
+    @IsOptional()
+    WS_RATE_LIMIT_WINDOW_MS?: number;
+
+    @IsNumber()
+    @IsOptional()
+    WS_RATE_LIMIT_MAX_VIOLATIONS?: number;
+
+    @IsNumber()
+    @IsOptional()
+    WS_MAX_DEVICE_TIME_SKEW_MS?: number;
+
+    @IsNumber()
+    @IsOptional()
+    LOCATION_DB_SAVE_INTERVAL_MS?: number;
+
+    @IsString()
+    @IsOptional()
+    ADMIN_EMAIL?: string;
+
+    @IsString()
+    @IsOptional()
+    ADMIN_PASSWORD?: string;
 }
 
 export function validate(config: Record<string, unknown>) {

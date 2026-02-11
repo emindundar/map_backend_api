@@ -17,6 +17,8 @@ Production-ready REST API backend for map tracking applications with enterprise-
 - ✅ **API Documentation** - Swagger/OpenAPI integration
 - ✅ **Type Safety** - Full TypeScript with strict mode
 - ✅ **Testing** - Unit and E2E test infrastructure
+- ✅ **WebSocket (Socket.IO)** - Real-time location tracking
+- ✅ **Location Tracking** - Live user location with room-based subscription
 
 ## 🛠️ Tech Stack
 
@@ -159,6 +161,25 @@ docker run -p 3000:3000 \
 
 **GET** `/api/health` - Health check endpoint
 
+### Location (Admin Only - Requires Bearer Token)
+
+**GET** `/api/location/:userId/last` - Get user's last location
+
+**GET** `/api/location/:userId/history?startDate=...&endDate=...&limit=50&offset=0` - Get location history
+
+### WebSocket — Real-time Location (ws://SERVER/location)
+
+> 📖 Client tarafı detaylı kullanım için: [LOCATION_README.md](src/modules/location/LOCATION_README.md)
+
+| Event | Direction | Role | Description |
+|---|---|---|---|
+| `update_location` | Client → Server | User | Send location update |
+| `location_updated` | Server → Client | Admin | Receive tracked user's location |
+| `subscribe_user` | Client → Server | Admin | Start tracking a user |
+| `unsubscribe_user` | Client → Server | Admin | Stop tracking a user |
+| `get_online_users` | Client → Server | Admin | List online users |
+| `ping` | Client → Server | Any | Connection health check |
+
 ## 🔒 Security Features
 
 - **JWT Authentication** - Stateless token-based auth
@@ -229,7 +250,8 @@ src/
 ├── modules/             # Feature modules
 │   ├── auth/            # Authentication
 │   ├── users/           # User management
-│   └── health/          # Health checks
+│   ├── health/          # Health checks
+│   └── location/        # Real-time location tracking (WS + REST)
 ├── database/            # Database related
 │   ├── migrations/      # SQL migrations
 │   └── seeds/           # Database seeds

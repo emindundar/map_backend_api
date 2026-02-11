@@ -22,6 +22,7 @@ import { TimeoutMiddleware } from './common/middleware/timeout.middleware';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { HealthModule } from './modules/health/health.module';
+import { LocationModule } from './modules/location/location.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { HealthModule } from './modules/health/health.module';
     AuthModule,
     UsersModule,
     HealthModule,
+    LocationModule,
   ],
   providers: [
     // Global Exception Filter

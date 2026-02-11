@@ -13,7 +13,7 @@ import { User, UserRole } from '../users/entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtPayload } from './strategies/jwt.strategy';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import {
     AuthUserDto,
     LoginResponseDto,
@@ -67,14 +67,20 @@ export class AuthService {
 
             this.logger.log(`New user registered: ${savedUser.email}`);
 
-            return {
-                success: true,
-                message: 'Kullanıcı başarıyla kaydedildi ve giriş yapıldı.',
-                token,
-                user: plainToClass(AuthUserDto, savedUser, {
-                    excludeExtraneousValues: true,
-                }),
-            };
+            const userDto = plainToInstance(AuthUserDto, savedUser, {
+                excludeExtraneousValues: true,
+            });
+
+            return plainToInstance(
+                RegisterResponseDto,
+                {
+                    success: true,
+                    message: 'Kullanıcı başarıyla kaydedildi ve giriş yapıldı.',
+                    token,
+                    user: userDto,
+                },
+                { excludeExtraneousValues: true },
+            );
         } catch (error) {
             if (error instanceof ConflictException) {
                 throw error;
@@ -115,14 +121,20 @@ export class AuthService {
 
             this.logger.log(`User logged in: ${user.email}`);
 
-            return {
-                success: true,
-                message: 'Giriş başarılı.',
-                token,
-                user: plainToClass(AuthUserDto, user, {
-                    excludeExtraneousValues: true,
-                }),
-            };
+            const userDto = plainToInstance(AuthUserDto, user, {
+                excludeExtraneousValues: true,
+            });
+
+            return plainToInstance(
+                LoginResponseDto,
+                {
+                    success: true,
+                    message: 'Giriş başarılı.',
+                    token,
+                    user: userDto,
+                },
+                { excludeExtraneousValues: true },
+            );
         } catch (error) {
             if (error instanceof UnauthorizedException) {
                 throw error;

@@ -2,6 +2,8 @@ import {
     Controller,
     Get,
     Delete,
+    Patch,
+    Body,
     Param,
     ParseIntPipe,
     HttpCode,
@@ -11,6 +13,7 @@ import { UsersService } from './users.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from './entities/user.entity';
 import { TrackableUsersResponseDto } from './dto/user-response.dto';
+import { UpdateRoleDto } from './dto/update-role.dto';
 
 @Controller('users')
 export class UsersController {
@@ -93,6 +96,26 @@ export class UsersController {
         return {
             success: true,
             message: 'Kullanıcı başarıyla silindi.',
+        };
+    }
+
+    /**
+     * PATCH /users/:id/role
+     * Kullanıcı rolünü güncelle (Admin yetkisi gerekir)
+     */
+    @Patch(':id/role')
+    @Roles(UserRole.ADMIN)
+    @HttpCode(HttpStatus.OK)
+    async updateRole(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() dto: UpdateRoleDto,
+    ) {
+        const user = await this.usersService.updateRole(id, dto.role);
+
+        return {
+            success: true,
+            message: 'Kullanıcı rolü güncellendi.',
+            user,
         };
     }
 
